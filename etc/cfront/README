@@ -1,0 +1,3 @@
+this dir contains patches for cfront-3.0.3 to build
+
+note: git apply here https://github.com/seyko2/cfront-3

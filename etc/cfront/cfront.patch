@@ -1,0 +1,270 @@
+diff --git a/src/Makefile b/src/Makefile
+index 1b64d6b..e74935f 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -1,145 +1,57 @@
+-CXX	?=	g++
+-CCFLAGS	=	-I../incl
++CXX      ?= g++
++CC       ?= gcc
++YACC     ?= byacc
+ 
+-#MPMACRO = PATCH
+-MPMACRO = MUNCH
++CXXFLAGS ?= -O2 -w
++CPPFLAGS += -I../incl-master/incl-linux32
++LDFLAGS  ?= 
+ 
+-OFILES	=	Bits.o alloc.o block.o dcl.o dcl2.o dcl3.o dcl4.o \
+-		del.o discrim.o error.o expand.o expr.o expr2.o \
+-		expr3.o find.o hash.o lalex.o lex.o main.o norm.o \
+-		norm2.o print.o print2.o repr.o simpl.o simpl2.o \
+-		size.o table.o template.o tree_copy.o tree_walk.o \
+-		typ.o typ2.o y.tab.o _stdio.o
++MPMACRO  ?= MUNCH
++DENSE    ?= 
+ 
++OFILES   = Bits.o alloc.o block.o dcl.o dcl2.o dcl3.o dcl4.o \
++           del.o discrim.o error.o expand.o expr.o expr2.o \
++           expr3.o find.o hash.o lalex.o lex.o main.o norm.o \
++           norm2.o print.o print2.o repr.o simpl.o simpl2.o \
++           size.o table.o template.o tree_copy.o tree_walk.o \
++           typ.o typ2.o y.tab.o _stdio.o
+ 
+-COMDEP0	= 	szal.result Makefile \
+-		Bits.h Block.h cfront.h hash.h node_classes.h overload.h \
+-		sdelicense.h sdetoolnum.h size.h template.h token.h \
+-		tqueue.h tree_copy.h tree_walk.h typedef.h
++HEADERS  = Bits.h Block.h cfront.h hash.h node_classes.h overload.h \
++           sdelicense.h sdetoolnum.h size.h template.h token.h \
++           tqueue.h tree_copy.h tree_walk.h typedef.h
+ 
+-COMDEP	=	$(COMDEP0) yystype.h
++GENERATED = szal.result yystype.h
+ 
+-cfront:	$(OFILES)
+-	$(CXX)	-o cfront $(OFILES)
++.PHONY: all clean
++
++all: cfront
++
++cfront: $(OFILES)
++	$(CXX) $(LDFLAGS) -o cfront $(OFILES) -lc++abi
+ 	-@ test -x ../cfront && mv ../cfront ../cfront.old
+ 	cp cfront ..
+ 
+-szal.result: szal/szal.c
+-	gcc -o szal/szal szal/szal.c
++szal/szal: szal/szal.c
++	$(CC) $(CFLAGS) -o szal/szal szal/szal.c
++
++szal.result: szal/szal
+ 	./szal/szal > szal.result
+ 
+-y.tab.C yystype.h: gram.y $(COMDEP0)
+-	yacc -d gram.y
++y.tab.C yystype.h: gram.y
++	$(YACC) -d gram.y
+ 	mv y.tab.c y.tab.C
+ 	mv y.tab.h yystype.h
+ 	sed -i -e 's/^#ifdef __cplusplus/#if 0/' y.tab.C
+ 
+-alloc.o: alloc.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c alloc.C 
+-
+-Bits.o:	Bits.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c Bits.C 
+-
+-block.o: block.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c block.C 
+-
+-dcl.o:	dcl.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c dcl.C 
+-
+-dcl2.o:	dcl2.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c dcl2.C 
+-
+-dcl3.o:	dcl3.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c dcl3.C 
+-
+-dcl4.o:	dcl4.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c dcl4.C 
+-
+-del.o:	del.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c del.C 
+-
+-discrim.o: discrim.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c discrim.C
+-
+-error.o: error.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c error.C 
+-
+-expand.o: expand.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c expand.C 
+-
+-expr.o:	expr.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c expr.C 
+-
+-expr2.o: expr2.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c expr2.C 
+-
+-expr3.o: expr3.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c expr3.C 
+-
+-find.o:	find.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c find.C 
+-
+-hash.o: hash.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c hash.C 
+-
+-lalex.o:lalex.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c lalex.C
+-
+-lex.o:	lex.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c lex.C 
+-
+-main.o:	main.C $(COMDEP)
+-	$(CXX) -D$(MPMACRO) $(DENSE) $(CCFLAGS) -c main.C 
+-
+-norm.o:	norm.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c norm.C 
+-
+-norm2.o: norm2.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c norm2.C 
+-
+-print.o: print.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c print.C 
+-
+-print2.o: print2.C $(COMDEP)
+-	$(CXX) $(DENSE) $(CCFLAGS) -c print2.C 
+-
+-repr.o:	repr.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c repr.C 
+-
+-simpl.o: simpl.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c simpl.C 
+-
+-simpl2.o: simpl2.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c simpl2.C 
+-
+-size.o:	size.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c size.C 
+-
+-table.o: table.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c table.C 
+-
+-template.o: template.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c template.C 
+-
+-tree_copy.o: tree_copy.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c tree_copy.C 
+-
+-tree_walk.o: tree_walk.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c tree_walk.C 
+-
+-typ.o: typ.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c typ.C 
++%.o: %.C $(HEADERS) $(GENERATED)
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+ 
+-typ2.o:	typ2.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c typ2.C 
++main.o: CPPFLAGS += -D$(MPMACRO)
+ 
+-y.tab.o: y.tab.C $(COMDEP)
+-	$(CXX) $(CCFLAGS) -c y.tab.C 
++main.o print2.o: CPPFLAGS += $(DENSE)
+ 
+ _stdio.o: _stdio.c
+-	cc -c _stdio.c
++	$(CC) $(CFLAGS) -c _stdio.c -o $@
+ 
+ clean:
+-	-@rm szal.result szal/szal
+-	-@rm y.tab.C yystype.h
+-	-@rm *.o cfront *..c
++	rm -f szal.result szal/szal y.tab.C yystype.h *.o cfront
+diff --git a/src/alloc.C b/src/alloc.C
+index 625591d..2100185 100644
+--- a/src/alloc.C
++++ b/src/alloc.C
+@@ -59,7 +59,7 @@ void* chunk(int i)	// get memory that is not to be freed
+ #define NEW_SIZE unsigned 
+ #endif
+ 
+-void* operator new(NEW_SIZE sz)	// get memory that might be freed
++void* operator new(size_t sz)	// get memory that might be freed
+ {
+ 
+ #ifdef _AIX
+diff --git a/src/error.C b/src/error.C
+index f8cbd05..3bc234f 100644
+--- a/src/error.C
++++ b/src/error.C
+@@ -330,7 +330,7 @@ int error(int t, loc* lc, const char* s, const ea& a0, const ea& a1, const ea& a
+ 				break;
+ 			}
+ 			case 'p':	// pointer
+-			{	char* f = sizeof(char*)==sizeof(int)?" %d":" %ld";
++			{	char* f = (char*)(sizeof(char*)==sizeof(int)?" %d":" %ld");
+ 				fprintf(out_file,f,a->p);
+ 				break;
+ 			}
+diff --git a/src/hash.C b/src/hash.C
+index 8c4662e..1e630a9 100644
+--- a/src/hash.C
++++ b/src/hash.C
+@@ -49,7 +49,7 @@ void Hash::error(const char* msg)
+   (*Hash_error_handler)(msg) ;
+ }
+ 
+-Hash::Hash(int sz= DEFAULT_INITIAL_HASH_SIZE)
++Hash::Hash(int sz)
+ {
+   tab = new HashTableEntry[size = sz] ;
+   for (int i = 0; i < size; ++i) tab[i].status = EMPTY ;
+diff --git a/src/hash.h b/src/hash.h
+index 0811902..3be84c5 100644
+--- a/src/hash.h
++++ b/src/hash.h
+@@ -63,7 +63,7 @@ public:
+   unsigned int          key_hash(int  a) ;
+   int                   key_key_eq(int a, int  b);    
+ 
+-                        Hash(int sz) ;
++                        Hash(int sz = DEFAULT_INITIAL_HASH_SIZE) ;
+                         Hash(Hash& a) ;
+                         ~Hash() ;
+ 
+diff --git a/src/main.C b/src/main.C
+index b3092a6..a286db4 100644
+--- a/src/main.C
++++ b/src/main.C
+@@ -655,7 +655,7 @@ process_debug_flags( char* p )
+ }
+ #endif /*DBG*/
+ 
+-main(int argc, char* argv[])
++int main(int argc, char* argv[])
+ /*
+ 	read options, initialize, and run
+ */
+diff --git a/src/template.h b/src/template.h
+index d151108..fc988a7 100644
+--- a/src/template.h
++++ b/src/template.h
+@@ -236,7 +236,7 @@ public:
+ class function_template : public basic_template {
+ /* SBL: go through these */
+   friend Pbinding is_ftempl_match(Pexpr,Pfunt);
+-  friend Pname has_templ_instance(Pname,Pexpr,bit=0);
++  friend Pname has_templ_instance(Pname,Pexpr,bit);
+   friend class templ_compilation;
+   friend class templ;
+   friend class templ_inst;
+@@ -499,3 +499,5 @@ extern int first_file;
+ extern bit all_flag,alltc_flag,data_flag,ft_flag,none_flag;
+ extern void set_flags();
+ extern Pname righttname;
++
++extern Pname has_templ_instance(Pname, Pexpr, bit = 0);
