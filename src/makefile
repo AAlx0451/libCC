@@ -24,7 +24,7 @@ $(NAME): $(OBJS)
 
 $(OBJDIR)/%.o: %.C
 	@mkdir -p $(@D)
-	@printf "\tC++\t$<\n"
+	@printf "\tCXX\t$<\n"
 	@$(CPP) $< $(CPPFLAGS) | $(CFRONT) | $(CC) $(CFLAGS) - -o $@
 
 clean:
