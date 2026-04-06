@@ -8,7 +8,7 @@ CPPFLAGS := -nostdinc -I../include -I../include/CC -U__cplusplus -D__cplusplus=1
 CFLAGS   := -x c -c -w -Wno-return-type
 
 OBJDIR   := objs
-SRCS     := $(wildcard pure/*.C)
+SRCS     := $(wildcard pure/*.C new/*.C)
 OBJS     := $(patsubst %.C, $(OBJDIR)/%.o, $(SRCS))
 
 NAME     := libC.a
