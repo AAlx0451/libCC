@@ -1,0 +1,3 @@
+libmunch - CFront destructor/constructor init code
+
+usage: cpp 1.C | cfront | cc -c -x c - -o 1.o ; nm 1.o libC.a | munch > tabl.m.c ; cc 1.o -lC -lmunch tabl.m.c
